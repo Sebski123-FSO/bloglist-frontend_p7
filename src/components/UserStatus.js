@@ -1,11 +1,15 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { setTitle, setUser } from "../reducers/blogReducer";
 
-const UserStatus = ({ user, setUser, setTitle }) => {
+const UserStatus = () => {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   const logout = () => {
     window.localStorage.removeItem("blogListSavedUser");
-    setUser(null);
-    setTitle("Log in to application");
+    dispatch(setUser(null));
+    dispatch(setTitle("Log in to application"));
   };
   return (
     <table>
@@ -21,12 +25,6 @@ const UserStatus = ({ user, setUser, setTitle }) => {
       </tbody>
     </table>
   );
-};
-
-UserStatus.propTypes = {
-  user: PropTypes.object.isRequired,
-  setUser: PropTypes.func.isRequired,
-  setTitle: PropTypes.func.isRequired,
 };
 
 export default UserStatus;

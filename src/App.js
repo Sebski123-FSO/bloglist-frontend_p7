@@ -1,27 +1,29 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import Notification from "./components/Notification";
-import Title from "./components/Title";
 import LoginPage from "./components/LoginPage";
 import NewBlogForm from "./components/NewBlogForm";
-import UserStatus from "./components/UserStatus";
+import Notification from "./components/Notification";
+import Title from "./components/Title";
 import Togglable from "./components/Togglable";
+import UserStatus from "./components/UserStatus";
+import {
+  setBlogs,
+  setNotification,
+  setTitle,
+  setUser,
+} from "./reducers/blogReducer";
+import blogService from "./services/blogs";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [title, setTitle] = useState("Log in to application");
-  const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState({
-    message: "",
-    err: false,
-  });
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
 
   const togglableRef = useRef();
 
   useEffect(async () => {
     const allBlogs = await blogService.getAll();
-    setBlogs(allBlogs);
+    dispatch(setBlogs(allBlogs));
   }, []);
 
   useEffect(() => {
@@ -29,34 +31,36 @@ const App = () => {
       "blogListSavedUser"
     );
     if (storedUserInfo) {
-      setUser(JSON.parse(storedUserInfo));
-      setTitle("Blogs");
+      dispatch(setUser(JSON.parse(storedUserInfo)));
+      dispatch(setTitle("Blogs"));
     }
   }, []);
 
   const createNotification = (message, isError = false, uptime = 3000) => {
-    setNotification({
-      message,
-      err: isError,
-    });
+    dispatch(
+      setNotification({
+        message,
+        err: isError,
+      })
+    );
     setTimeout(() => {
-      setNotification({ message: "", err: true });
+      dispatch(setNotification({ message: "", err: true }));
     }, uptime);
   };
 
   const createBlog = async (newBlog) => {
     try {
-      const response = await blogService.create(newBlog, user.token);
+      const response = await blogService.create(newBlog, state.user.token);
 
-      if (response.user === user.id) {
+      if (response.user === state.user.id) {
         response.user = {
-          id: user.id,
-          name: user.name,
-          userName: user.userName,
+          id: state.user.id,
+          name: state.user.name,
+          userName: state.user.userName,
         };
       }
 
-      setBlogs(blogs.concat(response));
+      dispatch(setBlogs(state.blogs.concat(response)));
       togglableRef.current.toggleVisibility();
       createNotification(`blog ${response.title} has been added`);
     } catch (err) {
@@ -66,9 +70,9 @@ const App = () => {
 
   const deleteBlog = async (id) => {
     try {
-      await blogService.deleteBlog(id, user.token);
+      await blogService.deleteBlog(id, state.user.token);
 
-      setBlogs(blogs.filter((blog) => blog.id !== id));
+      dispatch(setBlogs(state.blogs.filter((blog) => blog.id !== id)));
       createNotification("blog has been deleted");
     } catch (err) {
       createNotification(err.response.data.error, true);
@@ -78,9 +82,11 @@ const App = () => {
   const likeBlog = async (id, likes) => {
     try {
       const response = await blogService.updateLikes(id, likes + 1);
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id === id ? { ...blog, likes: response.likes } : blog
+      dispatch(
+        setBlogs(
+          state.blogs.map((blog) =>
+            blog.id === id ? { ...blog, likes: response.likes } : blog
+          )
         )
       );
     } catch (err) {
@@ -88,23 +94,19 @@ const App = () => {
     }
   };
 
-  const orderedBlogs = blogs.sort((a, b) => b.likes - a.likes);
+  const orderedBlogs = state.blogs.sort((a, b) => b.likes - a.likes);
 
   return (
     <>
-      <Title title={title} />
-      {notification.message && (
-        <Notification notification={notification} />
+      <Title title={state.title} />
+      {state.notification.message && (
+        <Notification notification={state.notification} />
       )}
-      {user === null ? (
-        <LoginPage
-          setUser={setUser}
-          setTitle={setTitle}
-          createNotification={createNotification}
-        />
+      {state.user === null ? (
+        <LoginPage createNotification={createNotification} />
       ) : (
         <div>
-          <UserStatus user={user} setUser={setUser} setTitle={setTitle} />
+          <UserStatus />
           <Togglable revealText="new blog" ref={togglableRef}>
             <NewBlogForm createBlog={createBlog} />
           </Togglable>
@@ -115,7 +117,7 @@ const App = () => {
                 blog={blog}
                 likeBlog={() => likeBlog(blog.id, blog.likes)}
                 deleteBlog={() => deleteBlog(blog.id)}
-                userName={user.userName}
+                userName={state.user.userName}
               />
             ))}
           </div>

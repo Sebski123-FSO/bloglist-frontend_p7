@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react";
-import loginService from "../services/login";
 import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setTitle, setUser } from "../reducers/blogReducer";
+import loginService from "../services/login";
 
-const LoginPage = ({ setUser, setTitle, createNotification }) => {
+const LoginPage = ({ createNotification }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     return () => {
@@ -16,12 +20,13 @@ const LoginPage = ({ setUser, setTitle, createNotification }) => {
     event.preventDefault();
     try {
       const response = await loginService.login(username, password);
+      console.log(response);
       window.localStorage.setItem(
         "blogListSavedUser",
         JSON.stringify(response)
       );
-      setUser(response);
-      setTitle("Blogs");
+      dispatch(setUser(response));
+      dispatch(setTitle("Blogs"));
       setUsername("");
       setPassword("");
     } catch (err) {
@@ -55,8 +60,6 @@ const LoginPage = ({ setUser, setTitle, createNotification }) => {
 };
 
 LoginPage.propTypes = {
-  setUser: PropTypes.func.isRequired,
-  setTitle: PropTypes.func.isRequired,
   createNotification: PropTypes.func.isRequired,
 };
 
