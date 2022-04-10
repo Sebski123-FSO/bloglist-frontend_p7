@@ -4,9 +4,8 @@ import UserStatus from "./UserStatus";
 
 const NavBar = () => {
   const navBarStyle = {
-    // marginLeft: "auto",
-    // marginRight: "auto",
-    // marginBottom: "10px",
+    backgroundColor: "lightblue",
+    height: "30px",
     position: "sticky",
     alignItems: "center",
     justifyContent: "center",
@@ -27,9 +26,6 @@ const NavBar = () => {
         </Link>
         <Link style={{ padding: "10px" }} to="/users">
           users
-        </Link>
-        <Link style={{ padding: "10px" }} to="/login">
-          login
         </Link>
       </ul>
       <div style={rightNavStyle}>
