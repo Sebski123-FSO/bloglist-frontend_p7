@@ -1,9 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
 
-const Notification = ({ notification }) => {
+const Notification = () => {
+  const notificationState = useSelector((state) => state.notification);
+
+  console.log(notificationState);
+
   const style = {
-    color: notification.err ? "red" : "green",
+    color: notificationState.err ? "red" : "green",
     background: "lightgrey",
     fontSize: 20,
     borderStyle: "solid",
@@ -14,13 +18,9 @@ const Notification = ({ notification }) => {
 
   return (
     <div id="notification" style={style}>
-      {notification.message}
+      {notificationState.message}
     </div>
   );
-};
-
-Notification.propTypes = {
-  notification: PropTypes.object.isRequired,
 };
 
 export default Notification;

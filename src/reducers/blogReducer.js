@@ -6,6 +6,7 @@ const initialState = {
     message: "",
     err: false,
   },
+  allUsers: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -29,6 +30,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         notification: action.notification,
+      };
+    case "SET_ALL_USERS":
+      return {
+        ...state,
+        allUsers: action.allUsers,
       };
     default:
       return state;
@@ -58,8 +64,15 @@ export const setTitle = (title) => {
 
 export const setNotification = (notification) => {
   return {
-    type: "Set_NOTIFICATION",
+    type: "SET_NOTIFICATION",
     notification,
+  };
+};
+
+export const setAllUsers = (allUsers) => {
+  return {
+    type: "SET_ALL_USERS",
+    allUsers,
   };
 };
 

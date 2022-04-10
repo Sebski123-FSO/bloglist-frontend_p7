@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setTitle, setUser } from "../reducers/blogReducer";
 import loginService from "../services/login";
 
@@ -8,9 +9,26 @@ const LoginPage = ({ createNotification }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const storedUserInfo = window.localStorage.getItem(
+      "blogListSavedUser"
+    );
+    if (storedUserInfo) {
+      dispatch(setUser(JSON.parse(storedUserInfo)));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user !== null) {
+      navigate("/");
+    } else {
+      dispatch(setTitle("Log in to application"));
+    }
     return () => {
       setUsername("");
     };
@@ -26,7 +44,6 @@ const LoginPage = ({ createNotification }) => {
         JSON.stringify(response)
       );
       dispatch(setUser(response));
-      dispatch(setTitle("Blogs"));
       setUsername("");
       setPassword("");
     } catch (err) {
