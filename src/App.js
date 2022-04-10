@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar";
 import Notification from "./components/Notification";
 import Title from "./components/Title";
 import UserInfo from "./components/UserInfo";
+import UsersInfo from "./components/UsersInfo";
 import { setNotification } from "./reducers/blogReducer";
 
 const App = () => {
@@ -38,7 +39,8 @@ const App = () => {
             path="/"
             element={<BlogList createNotification={createNotification} />}
           />
-          <Route path="/users" element={<UserInfo />} />
+          <Route path="/users" element={<UsersInfo />} />
+          <Route path="/users/:id" element={<UserInfo />} />
           <Route
             path="/login"
             element={<LoginPage createNotification={createNotification} />}
