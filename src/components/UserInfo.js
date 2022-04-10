@@ -17,8 +17,8 @@ const UserInfo = () => {
   }, [user]);
 
   useEffect(async () => {
-    const allBlogs = await usersService.getAll();
-    dispatch(setAllUsers(allBlogs));
+    const allUsers = await usersService.getAll();
+    dispatch(setAllUsers(allUsers));
   }, []);
 
   if (!user) {

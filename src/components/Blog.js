@@ -1,19 +1,27 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useMatch, useNavigate } from "react-router-dom";
+import { setBlogs, setTitle } from "../reducers/blogReducer";
+import blogService from "../services/blogs";
 
-const blogStyle = {
-  paddingTop: 10,
-  paddingLeft: 2,
-  border: "solid",
-  borderWidth: 1,
-  marginBottom: 5,
-};
+const Blog = ({ createNotification }) => {
+  const dispatch = useDispatch();
+  const state = useSelector((state) => state);
+  const navigate = useNavigate();
+  const match = useMatch("/blogs/:id");
+  const blog = match
+    ? state.blogs.find((blog) => blog.id === match.params.id)
+    : null;
 
-const Blog = ({ blog, likeBlog, userName, deleteBlog }) => {
-  const [showAllInfo, setShowAllInfo] = useState(false);
+  useEffect(() => {
+    dispatch(setTitle(blog ? blog.title : "Users"));
+  }, [blog]);
 
-  const toggleShowAllInfo = () => setShowAllInfo(!showAllInfo);
-  const ownedByUser = userName === blog.user.userName;
+  useEffect(async () => {
+    const allBlogs = await blogService.getAll();
+    dispatch(setBlogs(allBlogs));
+  }, []);
 
   const handleDeleteBlog = () => {
     if (window.confirm(`Delete note ${blog.title} by ${blog.author}?`)) {
@@ -21,59 +29,72 @@ const Blog = ({ blog, likeBlog, userName, deleteBlog }) => {
     }
   };
 
+  const likeBlog = async () => {
+    const id = blog.id;
+    const likes = blog.likes;
+    try {
+      const response = await blogService.updateLikes(id, likes + 1);
+      dispatch(
+        setBlogs(
+          state.blogs.map((blog) =>
+            blog.id === id ? { ...blog, likes: response.likes } : blog
+          )
+        )
+      );
+    } catch (err) {
+      createNotification(err.response.data.error, true);
+    }
+  };
+
+  const deleteBlog = async () => {
+    const id = blog.id;
+    try {
+      await blogService.deleteBlog(id, state.user.token);
+
+      dispatch(setBlogs(state.blogs.filter((blog) => blog.id !== id)));
+      createNotification("blog has been deleted");
+      navigate("/");
+    } catch (err) {
+      createNotification(err.response.data.error, true);
+    }
+  };
+
+  if (!blog) {
+    return <p>Loading...</p>;
+  }
+
+  const ownedByUser = state.user.name === blog.user.userName;
+
   return (
-    <div style={blogStyle}>
-      <div
-        style={{ display: showAllInfo ? "none" : "" }}
-        data-testid="basicInfo"
-      >
-        {blog.title} {blog.author}{" "}
-        <button onClick={toggleShowAllInfo}>view</button>
-      </div>
-      <div
-        style={{ display: showAllInfo ? "" : "none" }}
-        data-testid="extendedInfo"
-      >
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                {blog.title}{" "}
-                <button onClick={toggleShowAllInfo}>hide</button>
-              </td>
-            </tr>
-            <tr>
-              <td>{blog.url}</td>
-            </tr>
-            <tr>
-              <td data-testid="likes">
-                {blog.likes} <button onClick={likeBlog}>like</button>
-              </td>
-            </tr>
-            <tr>
-              <td>{blog.author}</td>
-            </tr>
-            <tr style={{ display: ownedByUser ? "" : "none" }}>
-              <td>
-                <button onClick={handleDeleteBlog}>delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-      </div>
+    <div>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <a href={blog.url}>{blog.url}</a>
+            </td>
+          </tr>
+          <tr>
+            <td data-testid="likes">
+              {blog.likes} likes <button onClick={likeBlog}>like</button>
+            </td>
+          </tr>
+          <tr>
+            <td>added by {blog.user.name}</td>
+          </tr>
+          <tr style={{ display: ownedByUser ? "" : "none" }}>
+            <td>
+              <button onClick={handleDeleteBlog}>delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  likeBlog: PropTypes.func.isRequired,
-  userName: PropTypes.string.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  createNotification: PropTypes.func.isRequired,
 };
 
 export default Blog;

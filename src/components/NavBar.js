@@ -35,7 +35,6 @@ const NavBar = () => {
       <div style={rightNavStyle}>
         <UserStatus />
       </div>
-      {/* <UserStatus/> */}
     </nav>
   );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
+import Blog from "./components/Blog";
 import BlogList from "./components/BlogList";
 import LoginPage from "./components/LoginPage";
 import NavBar from "./components/NavBar";
@@ -41,6 +42,14 @@ const App = () => {
           />
           <Route path="/users" element={<UsersInfo />} />
           <Route path="/users/:id" element={<UserInfo />} />
+          <Route
+            path="/blogs"
+            element={<BlogList createNotification={createNotification} />}
+          />
+          <Route
+            path="/blogs/:id"
+            element={<Blog createNotification={createNotification} />}
+          />
           <Route
             path="/login"
             element={<LoginPage createNotification={createNotification} />}
