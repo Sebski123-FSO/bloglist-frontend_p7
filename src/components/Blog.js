@@ -89,6 +89,14 @@ const Blog = ({ createNotification }) => {
           </tr>
         </tbody>
       </table>
+      <div style={{ display: blog.comments.length ? "" : "none" }}>
+        <h3>Comments</h3>
+        <ul>
+          {blog.comments.map((comment) => {
+            return <li key={comment}>{comment.content}</li>;
+          })}
+        </ul>
+      </div>
     </div>
   );
 };
