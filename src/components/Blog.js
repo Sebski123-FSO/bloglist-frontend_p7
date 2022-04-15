@@ -59,6 +59,28 @@ const Blog = ({ createNotification }) => {
     }
   };
 
+  const addComment = async (event) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+    const id = blog.id;
+    try {
+      const response = await blogService.addComment(id, comment);
+      console.log(response);
+      dispatch(
+        setBlogs(
+          state.blogs.map((blog) =>
+            blog.id === id
+              ? { ...blog, comments: [...blog.comments, response] }
+              : blog
+          )
+        )
+      );
+      event.target.comment.value = "";
+    } catch (err) {
+      createNotification(err.response.data.error, true);
+    }
+  };
+
   if (!blog) {
     return <p>Loading...</p>;
   }
@@ -91,9 +113,13 @@ const Blog = ({ createNotification }) => {
       </table>
       <div style={{ display: blog.comments.length ? "" : "none" }}>
         <h3>Comments</h3>
+        <form onSubmit={addComment}>
+          <input id="comment" />
+          <button>add comment</button>
+        </form>
         <ul>
           {blog.comments.map((comment) => {
-            return <li key={comment}>{comment.content}</li>;
+            return <li key={comment.id}>{comment.content}</li>;
           })}
         </ul>
       </div>
