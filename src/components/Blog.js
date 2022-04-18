@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useMatch, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import { setBlogs, setTitle } from "../reducers/blogReducer";
 import blogService from "../services/blogs";
 
@@ -102,7 +102,10 @@ const Blog = ({ createNotification }) => {
             </td>
           </tr>
           <tr>
-            <td>added by {blog.user.name}</td>
+            <td>
+              added by{" "}
+              <Link to={`/users/${blog.user.id}`}>{blog.user.name}</Link>
+            </td>
           </tr>
           <tr style={{ display: ownedByUser ? "" : "none" }}>
             <td>

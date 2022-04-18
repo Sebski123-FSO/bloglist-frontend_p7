@@ -1,5 +1,6 @@
-import React, { useState } from "react";
 import PropTypes from "prop-types";
+import React, { useState } from "react";
+import { Button, Form } from "react-bootstrap";
 
 const NewBlogForm = ({ createBlog }) => {
   const [newBlogTitle, setNewBlogTitle] = useState("");
@@ -23,36 +24,37 @@ const NewBlogForm = ({ createBlog }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        title:
-        <input
+    <Form onSubmit={handleSubmit} style={{ margin: 10 }}>
+      <Form.Group>
+        <Form.Label>Title:</Form.Label>
+        <Form.Control
+          type="text"
           id="newBlogTitle"
           value={newBlogTitle}
           onChange={(event) => setNewBlogTitle(event.target.value)}
           placeholder="Enter title of blog"
-        ></input>
-      </div>
-      <div>
-        author:
-        <input
+        ></Form.Control>
+        <Form.Label>Author:</Form.Label>
+        <Form.Control
+          type="text"
           id="newBlogAuthor"
           value={newBlogAuthor}
           onChange={(event) => setNewBlogAuthor(event.target.value)}
           placeholder="Enter author of blog"
-        ></input>
-      </div>
-      <div>
-        url
-        <input
+        ></Form.Control>
+        <Form.Label>Url:</Form.Label>
+        <Form.Control
+          type="text"
           id="newBlogUrl"
           value={newBlogUrl}
           onChange={(event) => setNewBlogUrl(event.target.value)}
           placeholder="Enter URL of blog"
-        ></input>
-      </div>
-      <button id="newBlogSubmit">create</button>
-    </form>
+        ></Form.Control>
+        <Button id="newBlogSubmit" style={{ marginTop: 10 }}>
+          Create
+        </Button>
+      </Form.Group>
+    </Form>
   );
 };
 

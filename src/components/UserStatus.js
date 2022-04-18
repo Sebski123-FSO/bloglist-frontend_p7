@@ -15,9 +15,11 @@ const UserStatus = () => {
     return null;
   } else {
     return (
-      <div style={{ display: "inline" }}>
-        <p style={{ display: "inline" }}>User {user.name} logged in </p>
-        <button onClick={logout}>logout</button>
+      <div>
+        <p style={{ display: "inline" }}>{user.name}: </p>
+        <u style={{ display: "inline" }} onClick={logout}>
+          logout
+        </u>
       </div>
     );
   }

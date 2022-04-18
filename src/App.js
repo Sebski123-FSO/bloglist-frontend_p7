@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Blog from "./components/Blog";
 import BlogList from "./components/BlogList";
 import LoginPage from "./components/LoginPage";
-import NavBar from "./components/NavBar";
+import NavigationBar from "./components/NavBar";
 import Notification from "./components/Notification";
 import Title from "./components/Title";
 import UserInfo from "./components/UserInfo";
@@ -28,8 +28,8 @@ const App = () => {
   };
 
   return (
-    <>
-      <NavBar />
+    <div className="container">
+      <NavigationBar />
       <Title title={state.title} />
       {state.notification.message && <Notification />}
       {state.user === null ? (
@@ -56,7 +56,7 @@ const App = () => {
           />
         </Routes>
       )}
-    </>
+    </div>
   );
 };
 

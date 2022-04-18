@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setTitle, setUser } from "../reducers/blogReducer";
@@ -52,27 +53,30 @@ const LoginPage = ({ createNotification }) => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        Username:
-        <input
+    <Form onSubmit={handleLogin}>
+      <Form.Group>
+        <Form.Label>Username:</Form.Label>
+        <Form.Control
+          type="text"
           id="username"
           name="username"
           value={username}
           onChange={({ target }) => setUsername(target.value)}
-        ></input>
-      </div>
-      <div>
-        Password:
-        <input
+        ></Form.Control>
+
+        <Form.Label>Password:</Form.Label>
+        <Form.Control
+          type="password"
           id="password"
           name="password"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
-        ></input>
-      </div>
-      <button id="submitBtn">Submit</button>
-    </form>
+        ></Form.Control>
+        <Button id="submitBtn" variant="primary" type="submit">
+          Login
+        </Button>
+      </Form.Group>
+    </Form>
   );
 };
 

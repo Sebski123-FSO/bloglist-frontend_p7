@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useMatch } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
 import { setAllUsers, setTitle } from "../reducers/blogReducer";
 import usersService from "../services/users";
 
@@ -30,7 +30,9 @@ const UserInfo = () => {
       <h3>Added blogs</h3>
       <ul>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <li key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </li>
         ))}
       </ul>
     </>
